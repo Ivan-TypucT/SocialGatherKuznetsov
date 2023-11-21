@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,6 +18,7 @@ namespace SocialGatherKuznetsov.Controllers
     public class RegistreationDatasController : Controller
     {
         private readonly SocialGatherKuznetsovContext _context;
+
 
         public RegistreationDatasController(SocialGatherKuznetsovContext context)
         {
@@ -31,18 +34,19 @@ namespace SocialGatherKuznetsov.Controllers
         }
 
         // GET: RegistreationDatas/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details()
         {
-            if (id == null || _context.RegistreationData == null)
+            var Userid = Request.Cookies["UserId"];
+            var registreationData = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => m.UserId == Userid);
+            if (registreationData == null)
             {
                 return NotFound();
             }
 
-            var registreationData = await _context.RegistreationData
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (registreationData == null)
+            if (registreationData.token != Request.Cookies["token"])
             {
-                return NotFound();
+                return Unauthorized();
             }
 
             return View(registreationData);
@@ -59,10 +63,20 @@ namespace SocialGatherKuznetsov.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Email,UserId,Login,Password,token")] RegistreationData registreationData)
+        public async Task<IActionResult> Create([Bind("Id,Email,UserId,Login,Password,salt,token")] RegistreationData registreationData, string password)
         {
             if (ModelState.IsValid)
             {
+                var any = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => (m.Login == registreationData.Login));
+                if(any!=null)
+                {
+                    //Логин уже существует
+                    return View();
+                }
+                byte[] salt = RSACrypt.GenerateSalt(16);
+                registreationData.salt = salt;
+                registreationData.Password = RSACrypt.GeneratePasswordHash(password, salt);
                 _context.Add(registreationData);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -93,7 +107,7 @@ namespace SocialGatherKuznetsov.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Email,UserId,Login,Password,token")] RegistreationData registreationData)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Email,UserId,Login,Password,salt,token")] RegistreationData registreationData, string password)
         {
             if (id != registreationData.Id)
             {
@@ -102,6 +116,22 @@ namespace SocialGatherKuznetsov.Controllers
 
             if (ModelState.IsValid)
             {
+                var any = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => (m.Login == registreationData.Login && m.Id != registreationData.Id));
+                if (any != null)
+                {
+                    //Логин уже существует
+                    return View();
+                }
+                var find = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => m.Id == id);
+                var change = registreationData;
+                registreationData = find;
+                registreationData.Login = change.Login;
+                registreationData.Email = change.Email;
+                registreationData.UserId = change.UserId;
+                registreationData.salt = RSACrypt.GenerateSalt(16);
+                registreationData.Password = RSACrypt.GeneratePasswordHash(password, registreationData.salt);
                 try
                 {
                     _context.Update(registreationData);
@@ -144,16 +174,49 @@ namespace SocialGatherKuznetsov.Controllers
         // GET: /Account/Login
         public async Task<IActionResult> LoginPage()
         {
+            string oKey;
+            string sKey;
+            RSACrypt.GenerateKeys(out oKey, out sKey);
+
+            TempData.Add(oKey,sKey); // Сохраняем закрытый ключ в переменную класса
+
+            Response.Cookies.Append("OpenKey", oKey, new CookieOptions
+            {
+                Expires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(20))
+            });
             return View();
         }
 
         // POST: /Account/Login
         [HttpPost]
-        public async Task<IActionResult> LoginPage(string login, string password)
+        public async Task<IActionResult> LoginPage(string login, string password, string encryptedPassword)
         {
+            if(encryptedPassword == "")
+            {
+                TempData["ErrorMessage"] = "Ошибка шифрования пароля. Попробуйте снова.";
+                return View();
+            }
             // Здесь выполняется проверка введенных данных в базе данных
+            var oKey = Request.Cookies["OpenKey"];
+            var data = RSACrypt.Decrypt((string)TempData[oKey], encryptedPassword);
+            if (data == null)
+                return RedirectToAction("LoginPage", "RegistreationDatas"); 
+
+            byte[] base64 = Convert.FromBase64String(data);
+            password = Encoding.UTF8.GetString(base64);
             var registreationData = await _context.RegistreationData
-                .FirstOrDefaultAsync(m => (m.Password == password && m.Login == login));
+                .FirstOrDefaultAsync(m => (m.Login == login));
+            if (registreationData != null)
+            {
+                byte[] hash = RSACrypt.GeneratePasswordHash(password, registreationData.salt);
+                if (Convert.ToBase64String(hash) != Convert.ToBase64String(registreationData.Password))
+                {
+                    registreationData = null;
+
+                }
+                else
+                TempData[oKey] = null;
+            }
             if (registreationData!=null)
             {
                 // Если пользователь существует и данные верны, выполните вход в аккаунт

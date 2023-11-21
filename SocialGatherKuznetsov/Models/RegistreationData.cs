@@ -11,7 +11,9 @@ namespace SocialGatherKuznetsov.Models
 
         public string Login { get; set; }
 
-        public string Password { get; set; }
+        public byte[]? Password { get; set; }
+
+        public byte[]? salt { get; set; }
 
         public string token { get; set; }
 
@@ -20,7 +22,8 @@ namespace SocialGatherKuznetsov.Models
         {
             Email = "";
             Login = "";
-            Password = "";
+            Password = null;
+            salt = null;
             token = "";
             UserId = null;
         }

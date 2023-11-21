@@ -37,12 +37,14 @@ namespace SocialGatherKuznetsov.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Password")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("salt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("token")
                         .IsRequired()

@@ -1,9 +1,8 @@
-﻿
-@{
-    ViewData["Title"] = "Delete";
+﻿@{
+    ViewData["Title"] = "Войдите в аккаунт";
 }
 
-<@{
+@{
     string errorMessage = TempData["ErrorMessage"] as string;
 }
 
@@ -11,10 +10,10 @@
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-        <p class="error-message">@errorMessage</p>
+    <p class="error-message">@errorMessage</p>
 }
 
-<form method="post">
+<form method="post" id="myForm">
     <div>
         <label for="login">Логин:</label>
         <input type="text" id="login" name="login" />
@@ -23,15 +22,57 @@
         <label for="password">Пароль:</label>
         <input type="password" id="password" name="password" />
     </div>
-    <button type="submit">Войти</button>
+    <div>
+        <input type="hidden" id="encryptedPassword" name="encryptedPassword" />
+    </div>
+    <div>
+        <button type="submit">Войти</button>
+    </div>
 </form>
-<div>
-    <a asp-action="Create">Create new account</a>
-</div>
+
 
 <style>
-.error-message {
-    color: red;
-    font-weight: bold;
-}
+    .error-message {
+        color: red;
+        font-weight: bold;
+    }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js"></script>
+<script>
+    alert(document.cookie);
+    function getPublicKeyFromCookie() {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith('OpenKey=')) {
+                var publicKey = decodeURIComponent(cookie.substring('OpenKey='.length));
+                return publicKey;
+            }
+        }
+        return null;
+    }
+    document.getElementById('myForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Получаем значение логина и пароля из формы ввода
+        var login = document.getElementById('login').value;
+        var password = document.getElementById('password').value;
+        var publicKey = getPublicKeyFromCookie();
+        if(!publicKey)
+            this.submit();
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(publicKey);
+        // Шифруем пароль с помощью открытого ключа RSA
+        var encryptedPassword = encrypt.encrypt(password);
+
+        // Устанавливаем зашифрованный пароль в скрытое поле формы
+        document.getElementById('encryptedPassword').value = encryptedPassword;
+
+        // Очищаем значение пароля
+        //document.getElementById('password').value = '';
+        alert(encryptedPassword);
+        // Отправляем форму на сервер
+        this.submit();
+    });
+</script>
