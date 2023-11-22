@@ -5,7 +5,7 @@
 namespace SocialGatherKuznetsov.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,8 @@ namespace SocialGatherKuznetsov.Migrations
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    salt = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     token = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

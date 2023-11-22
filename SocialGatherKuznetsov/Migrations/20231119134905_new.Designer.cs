@@ -11,8 +11,8 @@ using SocialGatherKuznetsov.Data;
 namespace SocialGatherKuznetsov.Migrations
 {
     [DbContext(typeof(SocialGatherKuznetsovContext))]
-    [Migration("20231114214845_CookieTest")]
-    partial class CookieTest
+    [Migration("20231119134905_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,12 +40,14 @@ namespace SocialGatherKuznetsov.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Password")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("salt")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("token")
                         .IsRequired()
