@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using SocialGatherKuznetsov.Models;
 using System.Diagnostics;
+using SocialGatherKuznetsov.Models;
 
 namespace SocialGatherKuznetsov.Controllers
 {
@@ -15,24 +17,21 @@ namespace SocialGatherKuznetsov.Controllers
 
         public IActionResult Index()
         {
-            /*
-            var model = ;
-            // Получение токена из cookie
-            string cookieToken = Request.Cookies["token"]?.Value;
-
-            if (cookieToken != model.Token)
-            {
-                // Токены не совпадают, возвращаем код ошибки 401
-                return new HttpStatusCodeResult(401, "Unauthorized");
-            }
-
-            // Токены совпадают, выполнение дальнейших действий
-
-            // Возвращаем ваш представление с моделью User*/
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult Chats()
+        {
+            return View();
+        }
+
+        public IActionResult Contacts()
+        {
+            return View();
+        }
+
+
+        public IActionResult Create()
         {
             return View();
         }

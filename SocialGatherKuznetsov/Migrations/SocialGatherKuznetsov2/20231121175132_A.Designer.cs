@@ -3,17 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialGatherKuznetsov.Data;
 
 #nullable disable
 
-namespace SocialGatherKuznetsov.Migrations
+namespace SocialGatherKuznetsov.Migrations.SocialGatherKuznetsov2
 {
-    [DbContext(typeof(SocialGatherKuznetsovContext))]
-    partial class SocialGatherKuznetsovContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SocialGatherKuznetsov2Context))]
+    [Migration("20231121175132_A")]
+    partial class A
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +24,7 @@ namespace SocialGatherKuznetsov.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("SocialGatherKuznetsov.Models.RegistreationData", b =>
+            modelBuilder.Entity("SocialGatherKuznetsov.Models.Card", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,30 +32,33 @@ namespace SocialGatherKuznetsov.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<int>("GuestsNum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Login")
-                        .IsRequired()
+                    b.Property<int>("PictureNum")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Place")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("Password")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("Tags")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Text")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("salt")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("RegistreationData");
+                    b.ToTable("Card");
                 });
 #pragma warning restore 612, 618
         }

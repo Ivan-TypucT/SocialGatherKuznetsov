@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialGatherKuznetsov.Data;
 
@@ -11,9 +12,10 @@ using SocialGatherKuznetsov.Data;
 namespace SocialGatherKuznetsov.Migrations
 {
     [DbContext(typeof(SocialGatherKuznetsovContext))]
-    partial class SocialGatherKuznetsovContextModelSnapshot : ModelSnapshot
+    [Migration("20231121170319_Huy")]
+    partial class Huy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

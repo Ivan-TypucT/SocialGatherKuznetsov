@@ -1,10 +1,10 @@
 ﻿@{
     ViewData["Title"] = "Войдите в аккаунт";
 }
-
 @{
     string errorMessage = TempData["ErrorMessage"] as string;
 }
+
 
 <h2>Вход в аккаунт</h2>
 
@@ -28,19 +28,15 @@
     <div>
         <button type="submit">Войти</button>
     </div>
+    <div>
+        <a href="/RegistreationDatas/Create"> Создать аккаунт</a>
+    </div>
 </form>
 
 
-<style>
-    .error-message {
-        color: red;
-        font-weight: bold;
-    }
-</style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js"></script>
 <script>
-    alert(document.cookie);
     function getPublicKeyFromCookie() {
         var cookies = document.cookie.split(';');
         for (var i = 0; i < cookies.length; i++) {
@@ -59,7 +55,7 @@
         var login = document.getElementById('login').value;
         var password = document.getElementById('password').value;
         var publicKey = getPublicKeyFromCookie();
-        if(!publicKey)
+        if (!publicKey)
             this.submit();
         var encrypt = new JSEncrypt();
         encrypt.setPublicKey(publicKey);
@@ -70,8 +66,7 @@
         document.getElementById('encryptedPassword').value = encryptedPassword;
 
         // Очищаем значение пароля
-        //document.getElementById('password').value = '';
-        alert(encryptedPassword);
+        document.getElementById('password').value = '';
         // Отправляем форму на сервер
         this.submit();
     });
