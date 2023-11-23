@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Создание события";
+}
+
+<h2>Создание карточки</h2>
+
+
+<form method="post" id="myCard">
+    <div>
+        <label for="login">Название события:</label>
+        <input type="text" id="namecard" name="namecard" />
+    </div>
+    <div>
+        <label for="text">Описание:</label>
+        <input type="text" id="textcard" name="textcard" />
+    </div>
+    <div>
+        <label for="date">Дата:</label>
+        <input type="date" id="datecard" name="datecard" />
+    </div>
+    <div>
+        <button type="submit">Создать</button>
+    </div>
+</form>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js"></script>
+<script>
+    function getPublicKeyFromCookie() {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.startsWith('OpenKey=')) {
+                var publicKey = decodeURIComponent(cookie.substring('OpenKey='.length));
+                return publicKey;
+            }
+        }
+        return null;
+    }
+    document.getElementById('myCard').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Получаем значение логина и пароля из формы ввода
+        var namecard = document.getElementById('namecard').value;
+        var textcard = document.getElementById('textcard').value;
+        var datecard = document.getElementById('datecard').value;
+        var publicKey = getPublicKeyFromCookie();
+        if (!publicKey)
+            this.submit();
+        var encrypt = new JSEncrypt();
+        encrypt.setPublicKey(publicKey);
+
+        // Отправляем форму на сервер
+        this.submit();
+    });
+</script>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

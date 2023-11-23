@@ -11,6 +11,8 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SocialGatherKuznetsovContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SocialGatherKuznetsovContext") ?? throw new InvalidOperationException("Connection string 'SocialGatherKuznetsovContext' not found.")));
+builder.Services.AddDbContext<SocialGatherKuznetsov2Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SocialGatherKuznetsov2Context") ?? throw new InvalidOperationException("Connection string 'SocialGatherKuznetsov2Context' not found.")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -19,19 +21,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            // ���������, ����� �� �������������� �������� ��� ��������� ������
+           
             ValidateIssuer = true,
-            // ������, �������������� ��������
+           
             ValidIssuer = AuthOptions.ISSUER,
-            // ����� �� �������������� ����������� ������
+     
             ValidateAudience = true,
-            // ��������� ����������� ������
             ValidAudience = AuthOptions.AUDIENCE,
-            // ����� �� �������������� ����� �������������
+            
             ValidateLifetime = true,
-            // ��������� ����� ������������
+            
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            // ��������� ����� ������������
+            
             ValidateIssuerSigningKey = true,
         };
     });
@@ -57,7 +58,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=RegistreationDatas}/{action=LoginPage}/");
+    pattern: "{controller=Home}/{action=Index}/");
 
 app.Run();
 public class AuthOptions

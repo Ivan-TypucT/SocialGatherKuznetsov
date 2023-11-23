@@ -25,6 +25,14 @@ namespace SocialGatherKuznetsov.Controllers
             _context = context;
         }
 
+        private readonly SocialGatherKuznetsov2Context _context2;
+
+        /*
+        public RegistreationDatasController(SocialGatherKuznetsov2Context context)
+        {
+            _context2 = context;
+        }
+        */
         // GET: RegistreationDatas
         public async Task<IActionResult> Index()
         {
@@ -34,19 +42,19 @@ namespace SocialGatherKuznetsov.Controllers
         }
 
         // GET: RegistreationDatas/Details/5
-        public async Task<IActionResult> Details()
+        public async Task<IActionResult> MyProfile()
         {
             var Userid = Request.Cookies["UserId"];
             var registreationData = await _context.RegistreationData
                 .FirstOrDefaultAsync(m => m.UserId == Userid);
             if (registreationData == null)
             {
-                return NotFound();
+                return RedirectToAction("LoginPage", "RegistreationDatas");
             }
 
             if (registreationData.token != Request.Cookies["token"])
             {
-                return Unauthorized();
+                return RedirectToAction("LoginPage", "RegistreationDatas");
             }
 
             return View(registreationData);
@@ -92,12 +100,12 @@ namespace SocialGatherKuznetsov.Controllers
                 .FirstOrDefaultAsync(m => m.UserId == Userid);
             if (registreationData == null)
                 {
-                    return NotFound();
-                }
+                    return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
 
             if (registreationData.token != Request.Cookies["token"])
             {
-                return Unauthorized();
+                return RedirectToAction("LoginPage", "RegistreationDatas");
             }
             return View(registreationData);
         }
@@ -154,18 +162,19 @@ namespace SocialGatherKuznetsov.Controllers
         }
 
         // GET: RegistreationDatas/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete()
         {
-            if (id == null || _context.RegistreationData == null)
-            {
-                return NotFound();
-            }
-
+            var Userid = Request.Cookies["UserId"];
             var registreationData = await _context.RegistreationData
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.UserId == Userid);
             if (registreationData == null)
             {
-                return NotFound();
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (registreationData.token != Request.Cookies["token"])
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
             }
 
             return View(registreationData);
@@ -290,5 +299,19 @@ namespace SocialGatherKuznetsov.Controllers
         {
           return (_context.RegistreationData?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public IActionResult CreateCard()
+        {
+            return View();
+        }
+
+
+        /*
+        public IActionResult CreateCard()
+        {
+            return View();
+        }
+
+        */
     }
 }
