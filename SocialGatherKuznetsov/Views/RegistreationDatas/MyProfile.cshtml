@@ -24,7 +24,15 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Password)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Subscribed)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Subscribed)
+        </dd>
     </dl>
 </div>
+<a asp-action="MyCards">Мои созданные карточки</a>
+<a asp-action="MyCards2">Мои карточки с участием</a>
 
 

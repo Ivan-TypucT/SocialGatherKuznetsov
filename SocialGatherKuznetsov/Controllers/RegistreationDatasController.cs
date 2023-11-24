@@ -18,21 +18,23 @@ namespace SocialGatherKuznetsov.Controllers
     public class RegistreationDatasController : Controller
     {
         private readonly SocialGatherKuznetsovContext _context;
-
-
-        public RegistreationDatasController(SocialGatherKuznetsovContext context)
-        {
-            _context = context;
-        }
-
         private readonly SocialGatherKuznetsov2Context _context2;
 
-        /*
-        public RegistreationDatasController(SocialGatherKuznetsov2Context context)
+
+        public RegistreationDatasController(SocialGatherKuznetsovContext context, SocialGatherKuznetsov2Context context2)
         {
-            _context2 = context;
+            _context = context;
+            _context2 = context2;
         }
-        */
+
+        
+
+        
+       // public RegistreationDatasController(SocialGatherKuznetsov2Context context)
+       // {
+       //     _context2 = context;
+       // }
+        
         // GET: RegistreationDatas
         public async Task<IActionResult> Index()
         {
@@ -300,18 +302,103 @@ namespace SocialGatherKuznetsov.Controllers
           return (_context.RegistreationData?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
-        public IActionResult CreateCard()
+        public async Task<IActionResult> CreateCard()
         {
+            var Userid = Request.Cookies["UserId"];
+            var registreationData = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => m.UserId == Userid);
+            if (registreationData == null)
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (registreationData.token != Request.Cookies["token"])
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
             return View();
         }
 
 
-        /*
-        public IActionResult CreateCard()
+        [HttpPost, ActionName("CreateCard")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateCard([Bind("Name,Text,Date,GuestsNumMax,Place,UserId")] Card card )
         {
-            return View();
+            var Userid = Request.Cookies["UserId"];
+            var registreationData = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => m.UserId == Userid);
+            if (registreationData == null)
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (registreationData.token != Request.Cookies["token"])
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+            card.UserId=Userid;
+            if (ModelState.IsValid)
+            {
+                _context2.Add(card);
+                await _context2.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(card);
         }
 
-        */
+        public async Task<IActionResult> MyCards()
+        {
+            var Userid = Request.Cookies["UserId"];
+            var registreationData = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => m.UserId == Userid);
+            if (registreationData == null)
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (registreationData.token != Request.Cookies["token"])
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (_context2.Card == null)
+                return Problem("Entity set 'SocialGatherKuznetsovContext.Card'  is null.");
+            var cards = from m in _context2.Card
+                        select m;
+            if (true)
+            {
+                cards = cards.Where(s => s.UserId == registreationData.UserId);
+            }
+            return View(await cards.ToListAsync());
+        }
+        public async Task<IActionResult> MyCards2()
+        {
+
+            var Userid = Request.Cookies["UserId"];
+            var registreationData = await _context.RegistreationData
+                .FirstOrDefaultAsync(m => m.UserId == Userid);
+            if (registreationData == null)
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (registreationData.token != Request.Cookies["token"])
+            {
+                return RedirectToAction("LoginPage", "RegistreationDatas");
+            }
+
+            if (_context2.Card == null)
+                return Problem("Entity set 'SocialGatherKuznetsovContext.Card'  is null.");
+            var cards = from m in _context2.Card
+                        select m;
+            if (true)
+            {
+                var code = cards.Where(s => s.GuestsList.Any(g => g.UserId == registreationData.UserId)).FirstOrDefault()?.GuestsList;
+                cards = cards.Where(s => s.GuestsList.Any(g => g.UserId == registreationData.UserId));
+            }
+            return View(await cards.ToListAsync());
+        }
+
+
     }
 }

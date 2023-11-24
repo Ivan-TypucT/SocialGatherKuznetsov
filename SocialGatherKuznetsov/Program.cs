@@ -7,6 +7,42 @@ using SocialGatherKuznetsov.Data;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.Extensions.Options;
+using SocialGatherKuznetsov.Models;
+/*
+using (var context = new SocialGatherKuznetsov2Context(new DbContextOptions<SocialGatherKuznetsov2Context>()))
+{
+    // Создаем экземпляр Guest
+    var pete = new Guest()
+    {
+        UserId = "pete123",
+    };
+
+    // Получаем нужный Card (pol)
+    var pol = context.Card.FirstOrDefault(c => c.Name == "pol");
+
+    if (pol != null)
+    {
+        // Добавляем Pete в GuestsList
+        pol.GuestsList.Add(pete);
+
+        // Сохраняем изменения в БД
+        context.SaveChanges();
+    }
+}
+using (var context = new SocialGatherKuznetsov2Context(new DbContextOptions<SocialGatherKuznetsov2Context>()))
+{
+    // Получаем нужный Card (pol)
+    var pol = context.Card.FirstOrDefault(c => c.Name == "pol");
+
+    if (pol != null)
+    {
+        // Извлекаем список гостей (GuestsList) у Card (pol)
+        var guestList = pol.GuestsList.ToList();
+
+        // Используем guestList по своему усмотрению
+    }
+}*/
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<SocialGatherKuznetsovContext>(options =>

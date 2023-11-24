@@ -41,6 +41,9 @@ namespace SocialGatherKuznetsov.Migrations
                     b.Property<byte[]>("Password")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<bool>("Subscribed")
+                        .HasColumnType("bit");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 

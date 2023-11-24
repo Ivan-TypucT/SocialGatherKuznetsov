@@ -17,6 +17,8 @@ namespace SocialGatherKuznetsov.Models
 
         public string token { get; set; }
 
+        public bool Subscribed { get; set; }
+
 
         public RegistreationData()
         {

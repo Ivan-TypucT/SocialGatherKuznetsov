@@ -1,60 +1,43 @@
-﻿@{
-    ViewData["Title"] = "Создание события";
+﻿@model SocialGatherKuznetsov.Models.Card
+@{
+    ViewData["Title"] = "Создание карточки";
 }
 
 <h2>Создание карточки</h2>
 
-
-<form method="post" id="myCard">
+<form asp-action="CreateCard">
     <div>
-        <label for="login">Название события:</label>
-        <input type="text" id="namecard" name="namecard" />
+        <label asp-for="Name">Название события:</label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
     </div>
     <div>
-        <label for="text">Описание:</label>
-        <input type="text" id="textcard" name="textcard" />
+        <label asp-for="Text">Описание:</label>
+        <input asp-for="Text" class="form-control" />
+        <span asp-validation-for="Text" class="text-danger"></span>
     </div>
     <div>
-        <label for="date">Дата:</label>
-        <input type="date" id="datecard" name="datecard" />
+        <label asp-for="Date">Дата:</label>
+        <input asp-for="Date" class="form-control" type="date" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="GuestsNumMax">Количество участников:</label>
+        <input asp-for="GuestsNumMax" class="form-control" type="number" />
+        <span asp-validation-for="GuestsNumMax" class="text-danger"></span>
+    </div>
+    <div>
+        <label asp-for="Place">Адрес места события (если место не определено, введите 0):</label>
+        <input asp-for="Place" class="form-control" />
+        <span asp-validation-for="Place" class="text-danger"></span>
+    </div>
+    <div>
+        <input asp-for="UserId" type="hidden" />
     </div>
     <div>
         <button type="submit">Создать</button>
     </div>
 </form>
-
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/2.3.1/jsencrypt.min.js"></script>
-<script>
-    function getPublicKeyFromCookie() {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            if (cookie.startsWith('OpenKey=')) {
-                var publicKey = decodeURIComponent(cookie.substring('OpenKey='.length));
-                return publicKey;
-            }
-        }
-        return null;
-    }
-    document.getElementById('myCard').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        // Получаем значение логина и пароля из формы ввода
-        var namecard = document.getElementById('namecard').value;
-        var textcard = document.getElementById('textcard').value;
-        var datecard = document.getElementById('datecard').value;
-        var publicKey = getPublicKeyFromCookie();
-        if (!publicKey)
-            this.submit();
-        var encrypt = new JSEncrypt();
-        encrypt.setPublicKey(publicKey);
-
-        // Отправляем форму на сервер
-        this.submit();
-    });
-</script>
 
 <div>
     <a asp-action="Index">Back to List</a>

@@ -9,11 +9,11 @@ using SocialGatherKuznetsov.Data;
 
 #nullable disable
 
-namespace SocialGatherKuznetsov.Migrations.SocialGatherKuznetsov2
+namespace SocialGatherKuznetsov.Migrations
 {
-    [DbContext(typeof(SocialGatherKuznetsov2Context))]
-    [Migration("20231121175132_A")]
-    partial class A
+    [DbContext(typeof(SocialGatherKuznetsovContext))]
+    [Migration("20231123215645_new")]
+    partial class @new
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace SocialGatherKuznetsov.Migrations.SocialGatherKuznetsov2
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("SocialGatherKuznetsov.Models.Card", b =>
+            modelBuilder.Entity("SocialGatherKuznetsov.Models.RegistreationData", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,33 +32,33 @@ namespace SocialGatherKuznetsov.Migrations.SocialGatherKuznetsov2
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("GuestsNum")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Email")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PictureNum")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Place")
+                    b.Property<string>("Login")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Tags")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Password")
+                        .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Subscribed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("date")
-                        .HasColumnType("datetime2");
+                    b.Property<byte[]>("salt")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Card");
+                    b.ToTable("RegistreationData");
                 });
 #pragma warning restore 612, 618
         }
